@@ -7,7 +7,7 @@ class ControladoraPersonal
 
 		public function agregarPersonal($car_uid,$sucEmp_uid,$per_srut, $per_snombre, $per_sapellido, 
 										$per_dfecha_ingreso, $per_email,
-									    $per_sfonoLocal, $per_sfonoMovil, per_sdireccion)
+									    $per_sfonoLocal, $per_sfonoMovil, $per_sdireccion)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
@@ -47,7 +47,7 @@ class ControladoraPersonal
 		
 		public function modificarPersonal($per_uid,$car_uid,$sucEmp_uid,$per_srut, $per_snombre,
 										$per_sapellido, $per_dfecha_ingreso, $per_semail,
-									    $per_sfonoLocal, $per_sfonoMovil, per_sdireccion)
+									    $per_sfonoLocal, $per_sfonoMovil, $per_sdireccion)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
@@ -187,14 +187,14 @@ class ControladoraPersonal
 			$conexion = new conexionDB();
 			$responseArray;
 			$sql_buscar = "select * from Personal";
-			$sentencia_buscar = $conexion->prepare($sql_buscar);
-			$sentencia_buscar->bind_param('i', $per_uid);
-			$sentencia_buscar->execute();
+			$sentencia_listar = $conexion->prepare($sql_buscar);
+			$sentencia_listar->bind_param('i', $per_uid);
+			$sentencia_listar->execute();
 			$contador = 0;
 			
-			while($sentencia_buscar->fetch() )
+			while($sentencia_listar->fetch() )
 			{	
-				$sentencia_buscar->bind_result($per_uid, $car_uid, $sucEmp_uid, $per_srut,
+				$sentencia_listar->bind_result($per_uid, $car_uid, $sucEmp_uid, $per_srut,
 											$per_snombre, $per_sapellido, $per_dfecha_ingreso, 
 											$per_semail, $per_sfonoLocal, $per_sfonoMovil, $per_sdireccion);
 

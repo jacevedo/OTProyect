@@ -1,28 +1,28 @@
 <?php
-	require_once '../Comun/conexionDB.php';
-	
-	class ControladoraInsumo
-	{
+    require_once '../Comun/conexionDB.php';
+
+    class ControladoraResponsable
+    {
 		private $sql;
 
-		public function agregarInsumo($ins_snombre, $ins_sprecio, $ins_ncantidadDisponible, $fk_fam_uid)
+		public function agregarResponsable($res_snombre, $reg_sapellido, $res_sfono, $res_semail)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
 			$this->datos = '';
-			
+
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "INSERT INTO insumo VALUES (null, ?, ?, ?, ?);";
-				
-				$sentencia = $conexion->prepare($this->SqlQuery);
-				$sentencia->bind_param("ssii", $ins_snombre, $ins_sprecio, $ins_ncantidadDisponible, $fk_fam_uid);
-				
-				if($sentencia->execute() )
+				$this->SqlQuery = $this->sql = "INSERT INTO responsable VALUES (null, ?, ?, ?, ?);";
+
+				$sentencia_agregar = $conexion->prepare($this->SqlQuery);
+				$sentencia_agregar->bind_param("ssss", $res_snombre, $reg_sapellido, $res_sfono, $res_semail);
+
+				if($sentencia_agregar->execute() )
 				{
 					$conexion->close();
-					$respuesta["id"] = $sentencia->insert_id;
+					$respuesta["id"] = $sentencia_agregar->insert_id;
 					$respuesta["motivo"] = "Inserción exitosa";
 				}
 				else
@@ -34,30 +34,30 @@
 			}
 			catch(Exception $e)
 			{
-				$respuesta["id"]=-2;
-				$respuesta["motivo"] = "exception";
+					$respuesta["id"]=-2;
+					$respuesta["motivo"] = "exception";
 			}
-			
+
 			return $respuesta;
 		}
 		
-		function buscarInsumo($ins_uid)
+		function buscarResponsable($res_uid)
 		{
 			$conexion = new conexionDB();
 
-			$sql_buscar = "SELECT * FROM insumo WHERE ins_uid = ?";
+			$sql_buscar = "SELECT * FROM responsable WHERE res_uid = ?";
 			$sentencia_buscar = $conexion->prepare($sql_buscar);
-			$sentencia_buscar->bind_param('i', $ins_uid);
+			$sentencia_buscar->bind_param('i', $res_uid);
 			$sentencia_buscar->execute();
-			$sentencia_buscar->bind_result($ins_uid, $ins_snombre, $ins_nprecio, $ins_ncantidadDisponible, $fam_uid);
+			$sentencia_buscar->bind_result($res_uid, $res_snombre, $reg_sapellido, $res_sfono, $res_semail);
 
 			if($sentencia_buscar->fetch() )
 			{
-				$response["ins_uid"] = $ins_uid;
-				$response["ins_snombre"] = $ins_snombre;
-				$response["ins_nprecio"] = $ins_nprecio;
-				$response["ins_ncantidadDisponible"] = $ins_ncantidadDisponible;
-				$response["fam_uid"] = $fam_uid;
+				$response["res_uid"] = $res_uid;
+				$response["res_snombre"] = $res_snombre;
+				$response["reg_sapellido"] = $reg_sapellido;
+				$response["res_sfono"] = $res_sfono;
+				$response["res_semail"] = $res_semail;
 				return $response;
 			}
 			else
@@ -67,49 +67,51 @@
 				return $response;
 			}
 		}
-		
-		function buscarInsumoNombre($ins_snombre)
+
+		function buscarResponsableNombre($res_snombre)
 		{
 			$conexion = new conexionDB();
-			$sql_buscar = "select * from insumo where ins_snombre = ?";
+
+			$sql_buscar = "SELECT * FROM responsable WHERE res_snombre = ?";
 			$sentencia_buscar = $conexion->prepare($sql_buscar);
-			$sentencia_buscar->bind_param('s', $reg_snombre);
+			$sentencia_buscar->bind_param('s', $res_snombre);
 			$sentencia_buscar->execute();
-			$sentencia_buscar->bind_result($ins_snombre, $ins_nprecio, $ins_ncantidadDisponible, $fk_fam_uid);
-			
+			$sentencia_buscar->bind_result($res_uid, $res_snombre, $reg_sapellido, $res_sfono, $res_semail);
+
 			if($sentencia_buscar->fetch() )
 			{
-				$response["ins_snombre"] = $ins_snombre;
-				$response["ins_nprecio"] = $ins_nprecio;
-				$response["ins_ncantidadDisponible"] = $ins_ncantidadDisponible;
-				$response["fk_fam_uid"] = $fk_fam_uid;
+				$response["res_uid"] = $res_uid;
+				$response["res_snombre"] = $res_snombre;
+				$response["reg_sapellido"] = $reg_sapellido;
+				$response["res_sfono"] = $res_sfono;
+				$response["res_semail"] = $res_semail;
 				return $response;
 			}
 			else
 			{
-				$response["ins_snombre"] = "None";
-				$response["ins_nprecio"] = "Error";
+				$response["id"] = -1;
+				$response["motivo"] = "Error al hacer la consulta";
 				return $response;
 			}
 		}
-		
-		function listarInsumo()
+
+		function listarResponsable()
 		{
 			$conexion = new conexionDB();
 			$responseArray;
-			$sql_listar = "select * from insumo";
+			$sql_listar = "select * from responsable";
 			$sentencia_listar = $conexion->prepare($sql_listar);
 			$sentencia_listar->execute();
 			$contador = 0;
 
 			while($sentencia_listar->fetch() )
 			{
-				$sentencia_listar->bind_result($ins_uid, $ins_snombre, $ins_nprecio, $ins_ncantidadDisponible, $fam_uid);
-				$response["ins_uid"] = $ins_uid;
-				$response["ins_snombre"] = $ins_snombre;
-				$response["ins_nprecio"] = $ins_nprecio;
-				$response["ins_ncantidadDisponible"] = $ins_ncantidadDisponible;
-				$response["fam_uid"] = $fam_uid;
+				$sentencia_listar->bind_result($res_uid, $res_snombre, $reg_sapellido, $res_sfono, $res_semail);
+				$response["res_uid"] = $res_uid;
+				$response["res_snombre"] = $res_snombre;
+				$response["reg_sapellido"] = $reg_sapellido;
+				$response["res_sfono"] = $res_sfono;
+				$response["res_semail"] = $res_semail;
 				$responseArray[$contador] = $response;
 				$contador++;
 			}
@@ -123,23 +125,25 @@
 			return $responseArray;
 		}
 		
-		public function modificarInsumo($ins_snombre, $ins_sprecio, $ins_ncantidadDisponible, $fk_fam_uid, $ins_uid)
+		public function modificarResponsable($res_uid, $res_semail, $res_snombre, $reg_sapellido, $res_sfono)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
 			$this->datos = '';
-			
+
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "UPDATE insumo set ins_snombre = ?, ins_sprecio = ?, ins_ncantidadDisponible = ?, fk_fam_uid = ?
-												WHERE ins_uid = ?;";
-				
-				$sentencia->bind_param("ssiii", $ins_snombre, $ins_sprecio, $ins_ncantidadDisponible, $fk_fam_uid, $ins_uid);
-				
-				if($sentencia->execute() )
+				$this->SqlQuery = $this->sql = "UPDATE responsable SET res_semail = ?, res_snombre = ?, 
+																		reg_sapellido = ?, 
+																		res_sfono = ? 
+																		WHERE res_uid = ?;";
+
+				$sentencia_modificar->bind_param("ssssi", $res_semail, $res_snombre, $reg_sapellido, $res_sfono, $reg_uid);
+
+				if($sentencia_modificar->execute() )
 				{
-					if($sentencia->affected_rows)
+					if($sentencia_modificar->affected_rows)
 					{
 						$conexion->close();
 						$respuesta["id"] = 1;
@@ -167,7 +171,7 @@
 			return $respuesta;
 		}
 		
-		function eliminarInsumo($ins_uid)
+		function eliminarResponsable($res_uid)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
@@ -176,10 +180,10 @@
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "DELETE FROM insumo
-												WHERE ins_uid = ?;";
+				$this->SqlQuery = $this->sql = "DELETE FROM responsable
+												WHERE res_uid = ?;";
 												
-				$sentencia_eliminar->bind_param("i", $ins_uid);
+				$sentencia_eliminar->bind_param("i", $res_uid);
 				
 				if($sentencia_eliminar->execute() )
 				{
@@ -210,5 +214,5 @@
 				$respuesta["motivo"] = "exception";
 			}
 		}
-	}
+    }
 ?>

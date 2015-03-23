@@ -1,11 +1,11 @@
 <?php
     require_once '../Comun/conexionDB.php';
 
-    class ControladoraFamilia
+    class ControladoraPlanOT
     {
 		private $sql;
 
-		public function agregarFamilia($fam_snombre, $fam_sdescripcion)
+		public function agregarPlanOT($pln_dfechaHoraPlan, $pln_sdescripcion, $pln_dfechaHoraEmisionIdeal, $fk_per_uid, $fk_tipest_uid)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
@@ -14,15 +14,15 @@
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "INSERT INTO familia VALUES (null, ?, ?);";
+				$this->SqlQuery = $this->sql = "INSERT INTO planOT VALUES (null, ?, ?, ?, ?, ?);";
 
-				$sentencia = $conexion->prepare($this->SqlQuery);
-				$sentencia->bind_param("ss", $fam_snombre, $fam_sdescripcion);
+				$sentencia_agregar = $conexion->prepare($this->SqlQuery);
+				$sentencia_agregar->bind_param("sssii", $pln_dfechaHoraPlan, $pln_sdescripcion, $pln_dfechaHoraEmisionIdeal, $fk_per_uid, $fk_tipest_uid);
 
-				if($sentencia->execute() )
+				if($sentencia_agregar->execute() )
 				{
 					$conexion->close();
-					$respuesta["id"] = $sentencia->insert_id;
+					$respuesta["id"] = $sentencia_agregar->insert_id;
 					$respuesta["motivo"] = "Inserción exitosa";
 				}
 				else
@@ -34,73 +34,31 @@
 			}
 			catch(Exception $e)
 			{
-				$respuesta["id"]=-2;
-				$respuesta["motivo"] = "exception";
-			}
-
-			return $respuesta;
-		}
-
-		public function modificarFamilia($fam_snombre, $fam_sdescripcion, $fam_uid)
-		{
-			$respuesta = array();
-			$conexion = new conexionDB();
-			$this->datos = '';
-
-			try
-			{
-				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "UPDATE familia set fam_snombre = ?, fam_sdescripcion = ? 
-																				WHERE fam_uid = ?;";
-
-				$sentencia->bind_param("ssi", $fam_snombre, $fam_sdescripcion, $fam_uid);
-
-				if($sentencia->execute() )
-				{
-					if($sentencia->affected_rows)
-					{
-						$conexion->close();
-						$respuesta["id"] = 1;
-						$respuesta["motivo"] = "Modificación exitosa";
-					}
-					else
-					{
-						$conexion->close();
-						$respuesta["id"] = 1;
-						$respuesta["motivo"] = "No existe valor que modificar";
-					}
-				}
-				else
-				{
-					$conexion->close();
-					$respuesta["id"]=-1;
-					$respuesta["motivo"] = "Error en la consulta";
-				}
-			}
-			catch(Exception $e)
-			{
 					$respuesta["id"]=-2;
 					$respuesta["motivo"] = "exception";
 			}
+
 			return $respuesta;
 		}
 		
-		
-
-		function buscarFamiliaNombre($fam_snombre)
+		function buscarPlanOT($pln_uid)
 		{
 			$conexion = new conexionDB();
-			$sql_buscar = "select * from familia where fam_snombre = ?";
+
+			$sql_buscar = "SELECT * FROM planOT WHERE pln_uid = ?";
 			$sentencia_buscar = $conexion->prepare($sql_buscar);
-			$sentencia_buscar->bind_param('s', $reg_snombre);
+			$sentencia_buscar->bind_param('i', $pln_uid);
 			$sentencia_buscar->execute();
-			$sentencia_buscar->bind_result($fam_uid, $fam_snombre, $fam_sdescripcion);
+			$sentencia_buscar->bind_result($pln_uid, $pln_dfechaHoraPlan, $pln_sdescripcion, $pln_dfechaHoraEmisionIdeal, $fk_per_uid, $fk_tipest_uid);
 
 			if($sentencia_buscar->fetch() )
 			{
-				$response["fam_uid"] = $fam_uid;
-				$response["fam_snombre"] = $fam_snombre;
-				$response["fam_sdescripcion"] = $fam_sdescripcion;
+				$response["pln_uid"] = $pln_uid;
+				$response["pln_dfechaHoraPlan"] = $pln_dfechaHoraPlan;
+				$response["pln_sdescripcion"] = $pln_sdescripcion;
+				$response["pln_dfechaHoraEmisionIdeal"] = $pln_dfechaHoraEmisionIdeal;
+				$response["fk_per_uid"] = $fk_per_uid;
+				$response["fk_tipest_uid"] = $fk_tipest_uid;
 				return $response;
 			}
 			else
@@ -110,22 +68,27 @@
 				return $response;
 			}
 		}
-		
-		function listarFamilia()
+
+		function listarPlanOT()
 		{
 			$conexion = new conexionDB();
 			$responseArray;
-			$sql_listar = "select * from familia";
+			$sql_listar = "select * from planOT";
 			$sentencia_listar = $conexion->prepare($sql_listar);
 			$sentencia_listar->execute();
 			$contador = 0;
 
 			while($sentencia_listar->fetch() )
 			{
-				$sentencia_listar->bind_result($fam_uid, $fam_snombre, $fam_sdescripcion);
-				$response["fam_uid"] = $fam_uid;
-				$response["fam_snombre"] = $fam_snombre;
-				$response["fam_sdescripcion"] = $fam_sdescripcion;
+				$sentencia_listar->bind_result($pln_uid, $pln_dfechaHoraPlan, $pln_sdescripcion, 
+									$pln_dfechaHoraEmisionIdeal, $fk_per_uid, $fk_tipest_uid);
+									
+				$response["pln_uid"] = $pln_uid;
+				$response["pln_dfechaHoraPlan"] = $pln_dfechaHoraPlan;
+				$response["pln_sdescripcion"] = $pln_sdescripcion;
+				$response["pln_dfechaHoraEmisionIdeal"] = $pln_dfechaHoraEmisionIdeal;
+				$response["fk_per_uid"] = $fk_per_uid;
+				$response["fk_tipest_uid"] = $fk_tipest_uid;
 				$responseArray[$contador] = $response;
 				$contador++;
 			}
@@ -139,24 +102,27 @@
 			return $responseArray;
 		}
 		
-		public function modificarTipoEstado($fam_uid, $fam_snombre, $fam_sdescripcion)
+		public function modificarPlanOT($pln_dfechaHoraPlan, $pln_sdescripcion, 
+									$pln_dfechaHoraEmisionIdeal, $fk_per_uid, $fk_tipest_uid, $pln_uid)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
 			$this->datos = '';
-			
+
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "UPDATE familia set fam_snombre = ?, 
-												fam_sdescripcion = ? 
-												WHERE fam_uid = ?;";
-				
-				$sentencia->bind_param("ssi", $fam_snombre, $fam_sdescripcion, $fam_uid);
-				
-				if($sentencia->execute() )
+				$this->SqlQuery = $this->sql = "UPDATE PlanOT SET pln_dfechaHoraPlan = ?, pln_sdescripcion = ?, 
+												pln_dfechaHoraEmisionIdeal = ?, fk_per_uid = ?, 
+												fk_tipest_uid = ?	
+												WHERE pln_uid = ?;";
+
+				$sentencia_modificar->bind_param("sssiii", $pln_dfechaHoraPlan, $pln_sdescripcion, $pln_dfechaHoraEmisionIdeal, 
+													$fk_per_uid, $fk_tipest_uid, $pln_uid);
+
+				if($sentencia_modificar->execute() )
 				{
-					if($sentencia->affected_rows)
+					if($sentencia_modificar->affected_rows)
 					{
 						$conexion->close();
 						$respuesta["id"] = 1;
@@ -184,7 +150,7 @@
 			return $respuesta;
 		}
 		
-		function eliminarFamilia($fam_uid)
+		function eliminarPlanOT($pln_uid)
 		{
 			$respuesta = array();
 			$conexion = new conexionDB();
@@ -193,10 +159,10 @@
 			try
 			{
 				$this->SqlQuery = '';
-				$this->SqlQuery = $this->sql = "DELETE FROM familia
-												WHERE fam_uid = ?;";
+				$this->SqlQuery = $this->sql = "DELETE FROM planOT
+												WHERE pln_uid = ?;";
 												
-				$sentencia_eliminar->bind_param("i", $fam_uid);
+				$sentencia_eliminar->bind_param("i", $pln_uid);
 				
 				if($sentencia_eliminar->execute() )
 				{

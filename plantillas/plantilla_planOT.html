@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div id="div_region">
+            
+            <table id="tabla_region" border="1" >
+                <tr>    
+                    <th>{pln_uid}</th>
+                    <th>{fk_per_uid}</th>
+					<th>{fk_tipEst_uid}</th>
+					<th>{pln_dfechaHoraPlan}</th>
+					<th>{pln_sdescripcion}</th>
+					<th>{pln_dfechaHoraEmisionIdeal}</th>
+                </tr>
+            </table>
+            
+            <form action="../Perfil/registrarASeguir.php" method="post">
+                <input type ="submit" value="Seguir">
+                       <input type="hidden" value="{fk_usuario}" name="id_seguir" />
+            </form>
+            
+        </div>
+        
+        <div id="links_nav">
+            <!-- BEGIN anterior -->
+            <a href="{anterior}"> Pagina Anterior </a>
+            <!-- END anterior -->
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <!-- BEGIN siguiente -->
+            <a href="{siguiente}"> Pagina Siguiente </a>
+            <!-- END siguiente -->
+        </div>
+    </body>
+</html>
